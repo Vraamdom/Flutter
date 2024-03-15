@@ -10,6 +10,7 @@ class Departamento {
   final String nombre_departamento;
 
   Departamento(
+      // ignore: non_constant_identifier_names
       {required this.codigo_departamento, required this.nombre_departamento});
 
   factory Departamento.fromJson(Map<String, dynamic> json) {
