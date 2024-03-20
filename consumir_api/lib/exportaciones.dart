@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class Http {
   
-  static String url = "https://exportaciones-api.onrender.com/exportaciones"; //link de mi codigo consumible
+  static String url = "https://exportaciones-ivyq.onrender.com/exportaciones"; //link de mi codigo consumible
   static postExportancion(Map exportacion) async{
     try{
       final res = await http.post(Uri.parse(url),
@@ -36,7 +36,7 @@ class Exportacion extends StatefulWidget {
   State<Exportacion> createState() => ExportacionState();
 }
 // ignore: non_constant_identifier_names
-TextEditingController id_producto = TextEditingController();
+
 TextEditingController producto = TextEditingController();
 TextEditingController kilos = TextEditingController();
 TextEditingController precioKilos = TextEditingController();
@@ -87,16 +87,6 @@ class ExportacionState extends State<Exportacion> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            TextField(
-              keyboardType: TextInputType.number,
-              controller: id_producto,
-              decoration: const InputDecoration(
-                hintText: "id_Producto",
-                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
-                labelText: 'Digitar id del producto',
-                labelStyle: TextStyle(color: Colors.grey, fontSize: 15,fontFamily: AutofillHints.name)
-                ),
-            ),
             const SizedBox(height: 20,),
             TextField(
               controller: producto,
@@ -143,7 +133,6 @@ class ExportacionState extends State<Exportacion> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue,),
                 onPressed: (){
                 var exportacion ={
-                  "id_p":id_producto.text,
                   "producto":producto.text,
                   "kilos":kilos.text,
                   "precio_kilo":precioKilos.text,
@@ -152,7 +141,15 @@ class ExportacionState extends State<Exportacion> {
                 };
               
                 print(exportacion);
-                Http.postExportancion(exportacion);
+                Http.postExportancion(exportacion).then((value) {
+                  Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ListarExportacion(),
+                    ),
+                  );
+                });
+
 
                 final route = MaterialPageRoute(
                 builder: (context) => const ListarExportacion() );

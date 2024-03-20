@@ -1,36 +1,32 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
-
 import 'package:consumir_api/listar_exportaciones.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+
 class EditarExportacion extends StatefulWidget {
   final Exportacion exportacion;
-  const EditarExportacion({Key? key, required this.exportacion})
-      : super(key: key);
+
+  const EditarExportacion({required this.exportacion});
 
   @override
-  State<EditarExportacion> createState() => _EditarExportacionState();
+  _EditarExportacionState createState() => _EditarExportacionState();
 }
 
 class _EditarExportacionState extends State<EditarExportacion> {
-  late TextEditingController productoController;
-  late TextEditingController kilosController;
-  late TextEditingController precioKilosController;
-  late TextEditingController precioDolarController;
+  late TextEditingController producto;
+  late TextEditingController kilos;
+  late TextEditingController precioKilos;
+  late TextEditingController precioActualDolar;
 
   @override
   void initState() {
     super.initState();
-    productoController =
-        TextEditingController(text: widget.exportacion.producto);
-    kilosController =
-        TextEditingController(text: widget.exportacion.kilos.toString());
-    precioKilosController =
+    producto = TextEditingController(text: widget.exportacion.producto);
+    kilos = TextEditingController(text: widget.exportacion.kilos.toString());
+    precioKilos =
         TextEditingController(text: widget.exportacion.precio_kilo.toString());
-    precioDolarController = TextEditingController(
+    precioActualDolar = TextEditingController(
         text: widget.exportacion.precio_dolar_actual.toString());
   }
 
@@ -40,115 +36,96 @@ class _EditarExportacionState extends State<EditarExportacion> {
       appBar: AppBar(
         title: const Text('Editar Exportación'),
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              controller: productoController,
-              decoration: const InputDecoration(labelText: 'Producto'),
+              controller: producto,
+              decoration: const InputDecoration(
+                hintText: 'Producto',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                labelText: 'Digitar nombre del producto',
+              ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 20),
             TextField(
-              controller: kilosController,
-              decoration: const InputDecoration(labelText: 'Kilos'),
               keyboardType: TextInputType.number,
+              controller: kilos,
+              decoration: const InputDecoration(
+                hintText: 'Kilos',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                labelText: 'Digitar kilos',
+              ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 20),
             TextField(
-              controller: precioKilosController,
-              decoration: const InputDecoration(labelText: 'Precio por kilo'),
               keyboardType: TextInputType.number,
+              controller: precioKilos,
+              decoration: const InputDecoration(
+                hintText: 'Precio kilos',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                labelText: 'Digitar precio de los kilos',
+              ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 20),
             TextField(
-              controller: precioDolarController,
-              decoration: const InputDecoration(labelText: 'Precio en dólares'),
-              keyboardType: TextInputType.number,
+              readOnly: true,
+              controller: precioActualDolar,
+              decoration: const InputDecoration(
+                hintText: 'Precio Dolar',
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+              ),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async {
-                // Convertir los valores de texto a tipos numéricos
-                int kilos = int.parse(kilosController.text);
-                int precioKilos = int.parse(precioKilosController.text);
-                double precioDolar = double.parse(precioDolarController.text);
+  onPressed: () {
+    // Obtener los nuevos valores introducidos por el usuario
+    String nuevoProducto = producto.text;
+    int nuevosKilos = int.parse(kilos.text);
+    int nuevoPrecioKilos = int.parse(precioKilos.text);
+    double nuevoPrecioActualDolar = double.parse(precioActualDolar.text);
 
-                // Crear la instancia de Exportacion con los valores convertidos
-                Exportacion exportacionActualizada = Exportacion( 
-                  id_p: widget.exportacion.id_p,
-                  producto: productoController.text,
-                  kilos: kilos,
-                  precio_kilo: precioKilos,
-                  precio_dolar_actual: precioDolar,
-                );
-                await editarExportacion(exportacionActualizada);
-                showDialog(
-                  context: context, builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Cambios guardados'),
-                      content: const Text('Los cambios se guardaron con éxito.'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Cierra el diálogo
-                            Navigator.of(context)
-                                .pop(); // Vuelve a la pantalla de listado
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const Text('Guardar'),
-            ),
+    // Crear el cuerpo de la solicitud con los nuevos valores y el ID original
+    Map<String, dynamic> cuerpoSolicitud = {
+      "_id": widget.exportacion.id, // Incluye el ID original en el cuerpo de la solicitud
+      "producto": nuevoProducto,
+      "kilos": nuevosKilos,
+      "precio_kilo": nuevoPrecioKilos,
+      "precio_dolar_actual": nuevoPrecioActualDolar,
+    };
+
+    // Realizar la solicitud HTTP para actualizar la exportación
+    http.put(
+      Uri.parse(
+          "https://exportaciones-ivyq.onrender.com/exportaciones/${widget.exportacion.id}"),
+      body: jsonEncode(cuerpoSolicitud), // Codifica el cuerpo de la solicitud como JSON
+      headers: {"Content-Type": "application/json"}, // Establece el tipo de contenido como JSON
+    ).then((response) {
+      // Verificar si la solicitud fue exitosa
+      if (response.statusCode == 200) {
+        // La exportación fue actualizada con éxito
+        print("La exportación fue actualizada con éxito");
+        Navigator.pop(context, true);
+      } else {
+        // Hubo un error al actualizar la exportación
+        print(
+            "Hubo un error al actualizar la exportación: ${response.statusCode}");
+      }
+    }).catchError((error) {
+      // Manejar cualquier error de solicitud
+      print("Error al realizar la solicitud HTTP: $error");
+    });
+  },
+  child: const Text('Guardar'),
+),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> editarExportacion(Exportacion exportacion) async {
-    // URL de la API donde se encuentra el recurso a editar
-    const String url = 'https://exportaciones-api.onrender.com/exportaciones';
-
-    // Convierte los datos de la exportación a un formato que la API pueda entender (JSON)
-    final Map<String, dynamic> datosActualizados = {
-      // Aquí debes incluir los campos que deseas actualizar
-      'id_p': exportacion.id_p,
-      'producto': exportacion.producto,
-      'kilos': exportacion.kilos,
-      'precioKilos': exportacion.precio_kilo,
-      'precioDolar': exportacion.precio_dolar_actual,
-    };
-    print('Datos actualizados:');
-    print(datosActualizados);
-
-    // Codificar los datos a JSON
-    final String cuerpoJson = jsonEncode(datosActualizados);
-
-    try {
-      // Realiza la solicitud PUT al servidor
-      final response = await http.put(
-        Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json'
-        }, // Establecer la cabecera para indicar que el cuerpo es JSON
-        body: cuerpoJson, // Pasar el cuerpo codificado JSON
-      );
-
-      // Verifica si la solicitud fue exitosa (código de estado 200)
-      if (response.statusCode == 200) {
-        print('Exportación editada con éxito');
-        setState(() {});
-      } else {
-        print('Error al editar exportación: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print('Error al realizar la solicitud: $e');
-    }
   }
 }
