@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vidakids_eventos/screens/menus_screen.dart';
+import 'package:vidakids_eventos/screens/login_screen.dart';
+
 
 void main(){
   runApp(const MainApp());
@@ -17,7 +18,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MenuScreen(),
+      home: Login()
     );
   } 
 }
