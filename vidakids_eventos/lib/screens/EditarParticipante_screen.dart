@@ -253,6 +253,17 @@ class _EditarParticipanteState extends State<EditarParticipante> {
           ),
         ),
       ),
+      bottomNavigationBar: BottomAppBar(
+          child: Container(
+            height: 50.0,
+            child: Center(
+              child: Text(
+                '© Derechos de autor Brandon Mejía Betancur 2024',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ),
+        ),
     );
   }
 }

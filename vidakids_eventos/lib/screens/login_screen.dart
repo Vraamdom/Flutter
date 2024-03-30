@@ -107,16 +107,6 @@ class _LoginState extends State<Login> {
           ],
         ),
       ),
-      // Imagen encima del formulario
-      const Positioned(
-        top: 0,
-        left:50,
-        child: CircleAvatar(
-          radius: 100.0,
-          backgroundColor: Colors.lightBlue,
-            backgroundImage: AssetImage('images/vk.png'),
-        ),
-      ),
     ],
   ),
 ),
