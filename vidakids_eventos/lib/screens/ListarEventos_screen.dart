@@ -152,9 +152,39 @@ class _ListarEventosState extends State<ListarEventos> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        eliminarEvento(eventos[index].id);
+                      onPressed: () async {
+                        // Mostrar un diálogo de confirmación
+                        bool confirmacion = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Confirmar eliminación'),
+                              content: const Text(
+                                  '¿Estás seguro de que deseas eliminar este registro?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(false); // No elimina el registro
+                                  },
+                                  child: const Text('Cancelar'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(true); // Confirma la eliminación
+                                  },
+                                  child: const Text('Eliminar'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
 
+                        // Si el usuario confirma la eliminación, proceder a eliminar el registro
+                        if (confirmacion == true) {
+                           eliminarEvento(eventos[index].id);
+                        }
                       },
                     ),
                   ],
