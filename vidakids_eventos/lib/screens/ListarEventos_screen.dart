@@ -15,6 +15,7 @@ class Evento {
   final String encargado_e_t;
   final int nro_participantes;
   final String estado;
+  final int valor;
 
   Evento({
     required this.id,
@@ -26,6 +27,7 @@ class Evento {
     required this.encargado_e_t,
     required this.nro_participantes,
     required this.estado,
+    required this.valor,
   });
 
   factory Evento.fromJson(Map<String, dynamic> json) {
@@ -39,6 +41,7 @@ class Evento {
       encargado_e_t: json['encargado_e_t'],
       nro_participantes: json['nro_participantes'],
       estado: json['estado'],
+      valor: json['valor'],
     );
   }
 }
@@ -139,6 +142,7 @@ class _ListarEventosState extends State<ListarEventos> {
                     Text(eventos[index].encargado_e_t.toString()),
                     Text(eventos[index].nro_participantes.toString()),
                     Text(eventos[index].estado.toString()),
+                    Text(eventos[index].valor.toString()),
                   ],
                 ),
                 trailing: Row(

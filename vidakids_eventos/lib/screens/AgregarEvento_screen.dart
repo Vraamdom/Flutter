@@ -44,6 +44,7 @@ TextEditingController encargadoEmpresa = TextEditingController();
 TextEditingController telefonoEncargadoEmpresa = TextEditingController();
 TextEditingController numeroParticipantes = TextEditingController();
 TextEditingController estadoEvento = TextEditingController();
+TextEditingController valorEvento = TextEditingController();
 
 class EventoState extends State<Evento> {
   @override
@@ -228,6 +229,32 @@ class EventoState extends State<Evento> {
                           color: Colors.grey,
                           fontSize: 15,
                           fontFamily: AutofillHints.name)),
+                      validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Porfavor ingrese la cantidad de participantes del evento";
+                      }
+                      return null;
+                    }
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: valorEvento,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      hintText: "Valor Evento",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      labelText: 'Digitar el valor del evento',
+                      labelStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15,
+                          fontFamily: AutofillHints.name)),
+                      validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Porfavor ingrese la cantidad de participantes del evento";
+                      }
+                      return null;
+                    }
                 ),
                 const SizedBox(
                   height: 20,
@@ -248,6 +275,7 @@ class EventoState extends State<Evento> {
                       "encargado_e_t": telefonoEncargadoEmpresa.text,
                       "nro_participantes": numeroParticipantes.text,
                       "estado": estadoEvento.text,
+                      "valor": valorEvento.text,
                     };
 
                     print(evento);

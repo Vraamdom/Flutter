@@ -22,6 +22,8 @@ class _EditarEventoState extends State<EditarEvento> {
   late TextEditingController telefonoEncargadoEmpresa;
   late TextEditingController numeroParticipantes;
   late TextEditingController estadoEvento;
+  late TextEditingController valorEvento;
+
 
   @override
   void initState() {
@@ -36,6 +38,8 @@ class _EditarEventoState extends State<EditarEvento> {
     numeroParticipantes =
         TextEditingController(text: widget.evento.nro_participantes.toString());
     estadoEvento = TextEditingController(text: widget.evento.estado);
+    valorEvento =
+        TextEditingController(text: widget.evento.valor.toString());
   }
 
   @override
@@ -220,6 +224,32 @@ class _EditarEventoState extends State<EditarEvento> {
                           color: Colors.grey,
                           fontSize: 15,
                           fontFamily: AutofillHints.name)),
+                      validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Porfavor ingrese la cantidad de participantes del evento";
+                      }
+                      return null;
+                    }
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: valorEvento,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      hintText: "Valor Evento",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      labelText: 'Digitar el valor del evento',
+                      labelStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15,
+                          fontFamily: AutofillHints.name)),
+                      validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Porfavor ingrese la cantidad de participantes del evento";
+                      }
+                      return null;
+                    }
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
@@ -237,6 +267,8 @@ class _EditarEventoState extends State<EditarEvento> {
                     int nuevoNumeroParticipantes =
                         int.parse(numeroParticipantes.text);
                     String nuevoEstadoEvento = estadoEvento.text;
+                    int nuevoValorEvento =
+                        int.parse(valorEvento.text);
 
                     // Crear el cuerpo de la solicitud con los nuevos valores y el ID original
                     Map<String, dynamic> cuerpoSolicitud = {
@@ -249,7 +281,8 @@ class _EditarEventoState extends State<EditarEvento> {
                       "encargado_e": nuevoEncargadoEmpresa,
                       "encargado_e_t": nuevoTelefonoEncargadoEmpresa,
                       "nro_participantes": nuevoNumeroParticipantes,
-                      "estado": nuevoEstadoEvento
+                      "estado": nuevoEstadoEvento,
+                      "valor": nuevoValorEvento,
                     };
 
                     // Realizar la solicitud HTTP para actualizar la exportación
